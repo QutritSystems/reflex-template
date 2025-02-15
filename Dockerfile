@@ -1,13 +1,14 @@
-# Base image
-FROM python:3.9-slim
+# Use Python 3.10 instead of 3.9
+FROM python:3.10-slim
 
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies including unzip
 RUN apt-get update && apt-get install -y \
     build-essential \
     curl \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
