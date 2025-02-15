@@ -53,7 +53,11 @@ def index() -> rx.Component:
                         ),
                         rx.text(
                             task.text,
-                            decoration_line="line-through" if task.done else "none",
+                            style=rx.cond(
+                                task.done,
+                                {"textDecoration": "line-through"},
+                                {"textDecoration": "none"}
+                            ),
                         ),
                         rx.button(
                             "Delete",
