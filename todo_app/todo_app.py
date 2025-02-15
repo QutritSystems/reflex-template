@@ -29,7 +29,11 @@ def todo_item(todo: Todo, index: int):
         ),
         rx.text(
             todo.text,
-            text_decoration="line-through" if todo.completed else "none",
+            style=rx.cond(
+                todo.completed,
+                {"textDecoration": "line-through"},
+                {"textDecoration": "none"}
+            ),
             flex="1",
         ),
         rx.button(
