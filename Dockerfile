@@ -1,28 +1,25 @@
-# Use Python 3.10 instead of 3.9
 FROM python:3.10-slim
 
-# Set working directory
 WORKDIR /app
 
-# Install system dependencies including unzip
 RUN apt-get update && apt-get install -y \
     build-essential \
     curl \
     unzip \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first for better caching
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application
 COPY . .
 
-# Build and run the Reflex app
-RUN python -m reflex run --env prod
+# Initialize the app first
+RUN python -m reflex init
 
-# Expose the port
+# Export the app
+RUN python -m reflex export --frontend-only
+
 EXPOSE 3000
 
-# Command to run the application
+# Run the app
 CMD ["python", "-m", "reflex", "run", "--env", "prod", "--host", "0.0.0.0", "--port", "3000"]
