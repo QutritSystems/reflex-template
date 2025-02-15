@@ -1,72 +1,78 @@
-import reflex as rx
-from typing import List
+"""A simple todo app."""
 
-class Todo(rx.Base):
+import reflex as rx
+
+class Task(rx.Base):
+    """A task."""
     text: str
-    completed: bool = False
+    done: bool = False
+
 
 class State(rx.State):
     """The app state."""
-    todos: List[Todo] = []
-    new_todo: str = ""
+    tasks: list[Task] = []
+    new_task: str = ""
 
-    def add_todo(self):
-        if self.new_todo.strip():
-            self.todos.append(Todo(text=self.new_todo))
-            self.new_todo = ""
+    def add_task(self):
+        """Add a new task."""
+        if self.new_task:
+            self.tasks.append(Task(text=self.new_task))
+            self.new_task = ""
 
-    def toggle_todo(self, index: int):
-        self.todos[index].completed = not self.todos[index].completed
+    def delete_task(self, idx: int):
+        """Delete a task."""
+        self.tasks.pop(idx)
 
-    def delete_todo(self, index: int):
-        self.todos.pop(index)
+    def toggle_done(self, idx: int):
+        """Toggle a task done."""
+        self.tasks[idx].done = not self.tasks[idx].done
 
-def todo_item(todo: Todo, index: int):
-    return rx.hstack(
-        rx.checkbox(
-            is_checked=todo.completed,
-            on_change=State.toggle_todo(index),
-        ),
-        rx.text(
-            todo.text,
-            style=rx.cond(
-                todo.completed,
-                {"textDecoration": "line-through"},
-                {"textDecoration": "none"}
-            ),
-            flex="1",
-        ),
-        rx.button(
-            "×",
-            on_click=State.delete_todo(index),
-            color="red",
-            bg="transparent",
-            border="none",
-        ),
-        width="100%",
-        padding="2",
-        border_bottom="1px solid #eee",
-    )
 
-def index():
-    return rx.vstack(
-        rx.heading("Todo List"),
-        rx.hstack(
-            rx.input(
-                placeholder="Add a new task...",
-                value=State.new_todo,
-                on_change=State.set_new_todo,
-            ),
-            rx.button("Add", on_click=State.add_todo),
-        ),
+def index() -> rx.Component:
+    """The main view."""
+    return rx.center(
         rx.vstack(
-            rx.foreach(
-                State.todos,
-                lambda todo, index: todo_item(todo, index)
-            )
-        ),
-        padding="2em",
+            rx.heading("Todo App", font_size="2em"),
+            rx.hstack(
+                rx.input(
+                    placeholder="Add a task",
+                    value=State.new_task,
+                    on_change=State.set_new_task,
+                ),
+                rx.button("Add", on_click=State.add_task),
+                width="100%",
+            ),
+            rx.divider(),
+            rx.vstack(
+                rx.foreach(
+                    State.tasks,
+                    lambda task, idx: rx.hstack(
+                        rx.checkbox(
+                            on_change=lambda: State.toggle_done(idx),
+                            is_checked=task.done,
+                        ),
+                        rx.text(
+                            task.text,
+                            decoration_line="line-through" if task.done else "none",
+                        ),
+                        rx.button(
+                            "Delete",
+                            on_click=lambda: State.delete_task(idx),
+                            size="sm",
+                        ),
+                        width="100%",
+                    ),
+                ),
+                width="100%",
+                padding="1em",
+            ),
+            width="100%",
+            max_width="600px",
+            padding="2em",
+        )
     )
 
+
+# Create the app and add the state.
 app = rx.App()
 app.add_page(index)
