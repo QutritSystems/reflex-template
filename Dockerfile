@@ -19,7 +19,8 @@ RUN python -m reflex init
 # Export the app
 RUN python -m reflex export --frontend-only
 
-EXPOSE 3000
+# Expose both frontend and backend ports
+EXPOSE 3000 8000
 
-# Run the app with correct parameters
-CMD ["python", "-m", "reflex", "run", "--env", "prod", "--backend-host", "0.0.0.0", "--backend-port", "3000"]
+# Run the app with separate ports for frontend and backend
+CMD ["python", "-m", "reflex", "run", "--env", "prod", "--backend-host", "0.0.0.0", "--frontend-port", "3000", "--backend-port", "8000"]
