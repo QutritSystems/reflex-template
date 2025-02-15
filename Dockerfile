@@ -19,8 +19,8 @@ RUN python -m reflex init
 # Export the app
 RUN python -m reflex export --frontend-only
 
-# Expose both frontend and backend ports
-EXPOSE 3000 8000
+# Expose Railway's default port
+EXPOSE 8080
 
-# Run the app with separate ports and hosts
-CMD ["python", "-m", "reflex", "run", "--env", "prod", "--frontend-host", "0.0.0.0", "--frontend-port", "3000", "--backend-host", "0.0.0.0", "--backend-port", "8000"]
+# Run the app with Railway's port
+CMD ["python", "-m", "reflex", "run", "--env", "prod", "--backend-host", "0.0.0.0", "--backend-port", "8080"]
