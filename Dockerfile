@@ -17,8 +17,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the application
 COPY . .
 
-# Build the Reflex app
-RUN reflex init
+# Build and run the Reflex app
 RUN python -m reflex run --env prod
 
 # Expose the port
